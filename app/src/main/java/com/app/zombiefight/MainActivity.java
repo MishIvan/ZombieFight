@@ -26,18 +26,25 @@ public class MainActivity extends AppCompatActivity {
         int m = GameField.getColumns();
         field.setRowCount(n);
         field.setColumnCount(m);
+        GameField.seedZombie(true);
+        GameField.seedZombie(false);
+        GameField.seedPerson();
         // расположить картинки по сетке
         for(int i=0;i<n;i++) {
             for(int j=0;j<m;j++)
             {
                 ImageView image = new ImageView(this);
-                Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.empty);
+                int id;
+                if(GameField.isPerson(i, j)) id = R.drawable.man;
+                else if(GameField.isZombie(i, j)) id = R.drawable.zombie;
+                else id = R.drawable.empty;
+                Bitmap bmp = BitmapFactory.decodeResource(getResources(), id);
                 image.setImageBitmap(bmp);
                 GridLayout.LayoutParams pars = new GridLayout.LayoutParams(GridLayout.spec(i), GridLayout.spec(j));
                 pars.width = GridLayout.LayoutParams.WRAP_CONTENT;
                 pars.height = GridLayout.LayoutParams.WRAP_CONTENT;
                 image.setLayoutParams(pars);
-                image.setTag("Img"+Integer.toString(i)+"x"+Integer.toString(j));
+                image.setTag("Img"+i+"x"+j);
                 field.addView(image, pars);
             }
         }
