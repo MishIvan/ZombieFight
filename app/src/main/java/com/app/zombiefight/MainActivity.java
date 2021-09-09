@@ -3,12 +3,47 @@ package com.app.zombiefight;
 import android.app.ActionBar;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Bundle;
+import android.os.*;
+import android.util.Size;
 import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.gridlayout.widget.GridLayout;
 
 public class MainActivity extends AppCompatActivity {
+
+    public class EntityHandler extends Handler
+    {
+        private int entityId;
+        public EntityHandler(int entityId)
+        {
+            super(Looper.getMainLooper());
+            this.entityId = entityId;
+        }
+
+        @Override
+        public void handleMessage(Message msg)
+        {
+            Bundle data = msg.getData();
+            Size _old = data.getSize("oldCoords");
+            Size _new = data.getSize("newCoords");
+            GridLayout field = findViewById(R.id.idField);
+            ImageView img = field.findViewWithTag("Img"+ _old.getWidth() + "x" + _old.getHeight());
+            if(img != null)
+            {
+                Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.empty);
+                img.setImageBitmap(bmp);
+            }
+            img = field.findViewWithTag("Img"+ _new.getWidth() + "x" + _new.getHeight());
+            if(img != null)
+            {
+                int id = entityId == 1 ? R.drawable.man : R.drawable.zombie;
+                Bitmap bmp = BitmapFactory.decodeResource(getResources(), id);
+                img.setImageBitmap(bmp);
+            }
+
+        }
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

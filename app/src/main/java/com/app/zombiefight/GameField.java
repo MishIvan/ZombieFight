@@ -5,19 +5,26 @@ import java.util.ArrayList;
 
 // игровое поле - содержит информацию о расположении
 public class GameField {
-    // списсок зомби
+    // список зомби
     private static ArrayList<Entity> zombies;
     // человек
     private static Entity creature;
+
     // флаг занятия клетки игрового поля
     final static char ZOMBIE = 'z';
     final static char PERSON = 'p';
     final static char FREE = ' ';
+
     // направление движения
     final static int LEFT = 1;
     final static int UP = 2;
     final static int RIGHT = 3;
     final static int DOWN = 4;
+
+    // статус сущности
+    final static int MOVING = 1;
+    final static int STAYING = 2;
+    final static int KILLED = 3;
 
     private static char [][] gameField;
     private static int rows;
@@ -82,12 +89,21 @@ public class GameField {
         gameField[row][col] = PERSON;
     }
     // найти замби по координате
-    public static Entity findZombie(int row, int column)
+    public static Entity findZombieByCoords(int row, int column)
     {
         Entity ent = null;
         for(Entity el : zombies)
         {
             if (el.getRow() == row && el.getColumn() == column) { ent = el; break;}
+        }
+        return ent;
+    }
+    public static Entity findZombieById(int id)
+    {
+        Entity ent = null;
+        for(Entity el : zombies)
+        {
+            if (el.getId() == id) { ent = el; break;}
         }
         return ent;
     }
