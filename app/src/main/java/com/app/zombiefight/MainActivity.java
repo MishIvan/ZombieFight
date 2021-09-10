@@ -5,7 +5,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.*;
 import android.util.Size;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.gridlayout.widget.GridLayout;
 
@@ -23,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg)
         {
+            Entity zombie = GameField.findZombieById(entityId);
+            if(zombie == null) return;
             Bundle data = msg.getData();
             Size _old = data.getSize("oldCoords");
             Size _new = data.getSize("newCoords");
@@ -33,12 +38,14 @@ public class MainActivity extends AppCompatActivity {
                 Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.empty);
                 img.setImageBitmap(bmp);
             }
-            img = field.findViewWithTag("Img"+ _new.getWidth() + "x" + _new.getHeight());
-            if(img != null)
-            {
-                int id = entityId == 1 ? R.drawable.man : R.drawable.zombie;
-                Bitmap bmp = BitmapFactory.decodeResource(getResources(), id);
-                img.setImageBitmap(bmp);
+
+            if(zombie.getStatus() != GameField.KILLED) {
+                img = field.findViewWithTag("Img" + _new.getWidth() + "x" + _new.getHeight());
+                if (img != null) {
+                    int id = R.drawable.zombie;
+                    Bitmap bmp = BitmapFactory.decodeResource(getResources(), id);
+                    img.setImageBitmap(bmp);
+                }
             }
 
         }
@@ -80,6 +87,18 @@ public class MainActivity extends AppCompatActivity {
                 pars.height = GridLayout.LayoutParams.WRAP_CONTENT;
                 image.setLayoutParams(pars);
                 image.setTag("Img"+i+"x"+j);
+
+                image.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        ImageView img = (ImageView) v;
+                        String tag = img.getTag().toString();
+                        TextView label = findViewById(R.id.idMessage);
+                        label.setText(tag);
+                        return false;
+                    }
+                });
+
                 field.addView(image, pars);
             }
         }
