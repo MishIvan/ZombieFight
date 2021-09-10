@@ -15,7 +15,7 @@ public class Entity {
         this.type = type;
         if(this.type == GameField.PERSON) id = 1;
         else id = (int)Math.round(Math.random()*(1.0e6+0.001 - 2.0)+2.0);
-        status = GameField.MOVING;
+        status = GameField.STAYING;
     }
 
 

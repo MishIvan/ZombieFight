@@ -53,6 +53,9 @@ public class GameField {
     public static void setEmpty(int row, int column) { gameField[row][column] = FREE;}
     public static void setZombie(int row, int column) { gameField[row][column] = ZOMBIE;}
     public static void setPerson(int row, int column) { gameField[row][column] = PERSON;}
+    public static Entity getCreature() { return creature;}
+    public static ArrayList<Entity> getZombies() { return zombies;}
+
 
     // для определения случайной строки
     public static int getRandomRow()
@@ -108,5 +111,4 @@ public class GameField {
         }
         return ent;
     }
-    public static Entity getCreature() { return creature;}
 }

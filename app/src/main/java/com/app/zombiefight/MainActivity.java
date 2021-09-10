@@ -12,8 +12,47 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.gridlayout.widget.GridLayout;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
+    public class ZombieThread extends Thread
+    {
+        private int entityId;
+        private EntityHandler handler;
+        public ZombieThread(int entityId)
+        {
+            this.entityId = entityId;
+            handler = new EntityHandler(entityId);
+        }
+
+        public void run()
+        {
+            Entity zombie = GameField.findZombieById(entityId);
+            if(zombie == null) return;
+            while(zombie.getStatus() != GameField.KILLED)
+            {
+                try {
+                    Thread.sleep(300);
+                }
+                catch(Exception ex)
+                {
+                    continue;
+                }
+                int row = zombie.getRow();
+                int column = zombie.getColumn();
+                zombie.move();
+                Message msg = handler.obtainMessage();
+                Bundle bundle = new Bundle();
+                bundle.putSize(getResources().getString(R.string.oldc),
+                        new Size(row, column));
+                bundle.putSize(getResources().getString(R.string.newc),
+                        new Size(zombie.getRow(), zombie.getColumn()));
+                msg.setData(bundle);
+                handler.sendMessage(msg);
+            }
+        }
+    }
     public class EntityHandler extends Handler
     {
         private int entityId;
@@ -30,10 +69,9 @@ public class MainActivity extends AppCompatActivity {
             if(zombie == null) return;
             if(zombie.getStatus() == GameField.KILLED) return;
             Bundle data = msg.getData();
-            Size _old = data.getSize("oldCoords");
-            Size _new = data.getSize("newCoords");
-            GridLayout field = findViewById(R.id.idField);
-            ImageView img = field.findViewWithTag("Img"+ _old.getWidth() + "x" + _old.getHeight());
+            Size _old = data.getSize(getResources().getString(R.string.oldc));
+            Size _new = data.getSize(getResources().getString(R.string.newc));
+            ImageView img = field.findViewWithTag(_old);
             if(img != null)
             {
                 Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.empty);
@@ -41,10 +79,9 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if(zombie.getStatus() != GameField.KILLED) {
-                img = field.findViewWithTag("Img" + _new.getWidth() + "x" + _new.getHeight());
+                img = field.findViewWithTag(_new);
                 if (img != null) {
-                    int id = R.drawable.zombie;
-                    Bitmap bmp = BitmapFactory.decodeResource(getResources(), id);
+                    Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.zombie);
                     img.setImageBitmap(bmp);
                 }
             }
@@ -76,6 +113,12 @@ public class MainActivity extends AppCompatActivity {
         GameField.seedZombie(true);
         GameField.seedZombie(false);
         GameField.seedPerson();
+        ArrayList<Entity> zombies = GameField.getZombies();
+        for(Entity zombie : zombies)
+        {
+            ZombieThread zt = new ZombieThread(zombie.getId());
+            zt.start();
+        }
         // расположить картинки по сетке
         for(int i=0;i<n;i++) {
             for(int j=0;j<m;j++)
