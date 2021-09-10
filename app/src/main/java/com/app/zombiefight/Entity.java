@@ -20,8 +20,6 @@ public class Entity {
 
 
     // координаты сущности на игровом поле
-    public void setRow(int row) { currentRow = row;}
-    public void setColumn(int column) { currentColumn = column;}
     public int getRow() { return currentRow;}
     public int getColumn() { return currentColumn;}
 
@@ -32,14 +30,13 @@ public class Entity {
 
     // тип сущности
     public boolean isZombie() { return type == GameField.ZOMBIE;}
-    public boolean isPerson() { return type == GameField.PERSON;}
     // движение сущности, возврат статуса сущности
     public void move()
     {
         if(isZombie())
         {
             int direction = (int)Math.round(Math.random()*(4.001 - 1.0)+1.0);
-            Entity zfind = null;
+            Entity zfind;
             int rows = GameField.getRows() - 1;
             int columns = GameField.getColumns() - 1;
             int oldRow = currentRow;
@@ -68,52 +65,34 @@ public class Entity {
                     newRow = oldRow;
                     break;
             }
-            zfind = GameField.findZombieByCoords(newRow, newColumn);
+            zfind = GameField.findZombieByCoordinates(newRow, newColumn);
             if (zfind == null) {
+                GameField.setEmpty(oldRow, oldColumn);
                 currentRow = newRow;
                 currentColumn = newColumn;
+                GameField.setZombie(currentRow, currentColumn);
                 status = GameField.MOVING;
             }
             else
                 status = GameField.STAYING;
         }
     }
-
-    public void move(int direction)
+    public void move(int row, int column)
     {
-        int rows = GameField.getRows() - 1;
-        int columns = GameField.getColumns() - 1;
-        int oldRow = currentRow;
-        int oldColumn = currentColumn;
-        int newRow;
-        int newColumn;
-
-        if(isPerson())
+        if(isZombie()) { status = GameField.STAYING; return;}
+        if(
+             (currentRow == row && (column == currentColumn +1 || column == currentColumn -1))
+          || (currentColumn == column && (row == currentRow - 1 || row == currentRow + 1))
+        )
         {
-            switch (direction)
-            {
-                // вверх
-                case GameField.UP:
-                    newRow = oldRow == 0 ? rows : oldRow - 1;
-                    newColumn = oldColumn;
-                    break;
-                // вниз
-                case GameField.DOWN:
-                    newRow = oldRow == rows ? 0 : oldRow + 1;
-                    newColumn = oldColumn;
-                    break;
-                // влево
-                case GameField.LEFT:
-                    newColumn = oldColumn == 0 ? columns : oldColumn - 1;
-                    newRow = oldRow;
-                    break;
-                case GameField.RIGHT:
-                    newColumn = oldColumn == columns ? 0 : oldColumn + 1;
-                    newRow = oldRow;
-                    break;
-            }
-
+            GameField.setEmpty(currentRow, currentColumn);
+            currentRow = row;
+            currentColumn = column;
+            GameField.setPerson(currentRow, currentColumn);
+            status = GameField.MOVING;
         }
+        else
+            status = GameField.STAYING;
     }
     public void kill() { return;}
 }

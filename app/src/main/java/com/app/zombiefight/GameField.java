@@ -1,6 +1,8 @@
 package com.app.zombiefight;
 
 
+import android.util.Size;
+
 import java.util.ArrayList;
 
 // игровое поле - содержит информацию о расположении
@@ -30,11 +32,10 @@ public class GameField {
     private static int rows;
     private static int columns;
 
-    public static void setGameField(String fieldSize)
+    public static void setGameField(Size fieldSize)
     {
-        String [] size = fieldSize.split("x");
-        rows = Integer.parseInt(size[0]);
-        columns = Integer.parseInt(size[1]);
+        rows = fieldSize.getWidth();
+        columns = fieldSize.getHeight();
         gameField = new char[rows][columns];
         for(int i=0;i<rows;i++)
             for(int j=0; j<columns;j++)
@@ -89,7 +90,7 @@ public class GameField {
         gameField[row][col] = PERSON;
     }
     // найти замби по координате
-    public static Entity findZombieByCoords(int row, int column)
+    public static Entity findZombieByCoordinates(int row, int column)
     {
         Entity ent = null;
         for(Entity el : zombies)
@@ -107,4 +108,5 @@ public class GameField {
         }
         return ent;
     }
+    public static Entity getCreature() { return creature;}
 }

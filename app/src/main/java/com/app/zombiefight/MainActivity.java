@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
         {
             Entity zombie = GameField.findZombieById(entityId);
             if(zombie == null) return;
+            if(zombie.getStatus() == GameField.KILLED) return;
             Bundle data = msg.getData();
             Size _old = data.getSize("oldCoords");
             Size _new = data.getSize("newCoords");
@@ -51,19 +52,23 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
+    private GridLayout field;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         androidx.appcompat.app.ActionBar ab = getSupportActionBar();
         if (ab != null) {
-            ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE
-                    | ActionBar.DISPLAY_HOME_AS_UP);
+            ab.setDisplayShowHomeEnabled(true);
             ab.setIcon(R.drawable.zombie_icon);
         }
-        GameField.setGameField("10x10");
-        GridLayout field = findViewById(R.id.idField);
+        field = findViewById(R.id.idField);
+        InitGame(new Size(10,10));
+
+    }
+    //инициализация игры
+    private void InitGame(Size fieldSize) {
+        GameField.setGameField(fieldSize);
         int n = GameField.getRows();
         int m = GameField.getColumns();
         field.setRowCount(n);
@@ -86,23 +91,35 @@ public class MainActivity extends AppCompatActivity {
                 pars.width = GridLayout.LayoutParams.WRAP_CONTENT;
                 pars.height = GridLayout.LayoutParams.WRAP_CONTENT;
                 image.setLayoutParams(pars);
-                image.setTag("Img"+i+"x"+j);
+                image.setTag(new Size(i,j));
 
-                image.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        ImageView img = (ImageView) v;
-                        String tag = img.getTag().toString();
+                image.setOnTouchListener((v, event) -> {
+                    Entity creature = GameField.getCreature();
+                    if(creature == null) return false;
+                    if(creature.getStatus() == GameField.KILLED) return false;
+                    ImageView img = (ImageView) v;
+                    Size tag = (Size) img.getTag();
+                    int x = tag.getWidth();
+                    int y = tag.getHeight();
+                    int row = creature.getRow();
+                    int column = creature.getColumn();
+                    creature.move(x, y);
+                    if(creature.getStatus() == GameField.MOVING)
+                    {
                         TextView label = findViewById(R.id.idMessage);
-                        label.setText(tag);
-                        return false;
+                        label.setText("Row:" + x + " Column:" + y);
+                        ImageView oldimg = field.findViewWithTag(new Size(row,column));
+                        Bitmap bmpold = BitmapFactory.decodeResource(getResources(), R.drawable.empty);
+                        oldimg.setImageBitmap(bmpold);
+                        Bitmap bmpnew = BitmapFactory.decodeResource(getResources(), R.drawable.man);
+                        img.setImageBitmap(bmpnew);
                     }
+                    return true;
                 });
 
                 field.addView(image, pars);
             }
         }
-
     }
 
 }
