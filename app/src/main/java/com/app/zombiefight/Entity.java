@@ -13,8 +13,7 @@ public class Entity {
         currentRow = row;
         currentColumn = column;
         this.type = type;
-        if(this.type == GameField.PERSON) id = 1;
-        else id = (int)Math.round(Math.random()*(1.0e6+0.001 - 2.0)+2.0);
+        id = this.type == GameField.PERSON ? 1 : (int)Math.round(Math.random()*(1.0e6+0.001 - 2.0)+2.0);
         status = GameField.STAYING;
     }
 
@@ -27,9 +26,11 @@ public class Entity {
     public int getId() { return id;}
     // статус сущности
     public int getStatus() { return status;}
+    public void setStatus(int status) { this.status = status;}
 
-    // тип сущности
+    // сущность - это зомби
     public boolean isZombie() { return type == GameField.ZOMBIE;}
+
     // движение сущности, возврат статуса сущности
     public void move()
     {
@@ -37,6 +38,7 @@ public class Entity {
         {
             int direction = (int)Math.round(Math.random()*(4.001 - 1.0)+1.0);
             Entity zfind;
+            Entity creature = GameField.getCreature();
             int rows = GameField.getRows() - 1;
             int columns = GameField.getColumns() - 1;
             int oldRow = currentRow;
@@ -67,11 +69,20 @@ public class Entity {
             }
             zfind = GameField.findZombieByCoordinates(newRow, newColumn);
             if (zfind == null) {
-                GameField.setEmpty(oldRow, oldColumn);
-                currentRow = newRow;
-                currentColumn = newColumn;
-                GameField.setZombie(currentRow, currentColumn);
-                status = GameField.MOVING;
+                int colCreature = creature == null ? -1 :creature.getColumn();
+                int rowCreature = creature == null ? -1 :creature.getRow();
+                if(newRow == rowCreature && newColumn == colCreature )
+                {
+                    GameField.getCreature().setStatus(GameField.KILLED);
+                    status = GameField.STAYING;
+                }
+                else {
+                    GameField.setEmpty(oldRow, oldColumn);
+                    currentRow = newRow;
+                    currentColumn = newColumn;
+                    GameField.setZombie(currentRow, currentColumn);
+                    status = GameField.MOVING;
+                }
             }
             else
                 status = GameField.STAYING;
@@ -94,5 +105,4 @@ public class Entity {
         else
             status = GameField.STAYING;
     }
-    public void kill() { return;}
 }

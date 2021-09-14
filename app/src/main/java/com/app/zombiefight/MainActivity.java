@@ -1,12 +1,9 @@
 package com.app.zombiefight;
 
-import android.app.ActionBar;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.*;
 import android.util.Size;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,7 +13,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    public class ZombieThread extends Thread
+    private class ZombieThread extends Thread
     {
         private int entityId;
         private EntityHandler handler;
@@ -33,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
             while(zombie.getStatus() != GameField.KILLED)
             {
                 try {
-                    Thread.sleep(300);
+                    Thread.sleep(500);
                 }
                 catch(Exception ex)
                 {
@@ -53,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    public class EntityHandler extends Handler
+    private class EntityHandler extends Handler
     {
         private int entityId;
         public EntityHandler(int entityId)
@@ -85,7 +82,28 @@ public class MainActivity extends AppCompatActivity {
                     img.setImageBitmap(bmp);
                 }
             }
+            Entity creature = GameField.getCreature();
+            if(creature == null) return;
+            if(creature.getStatus() == GameField.KILLED) {
+                int row = creature.getRow();
+                int column = creature.getColumn();
+                img = field.findViewWithTag(new Size(row ,column ));
+                if (img != null) {
+                    Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.zombie);
+                    img.setImageBitmap(bmp);
+                    GameField.killCreature();
+                    Entity newZombie = GameField.findZombieByCoordinates(row, column);
+                    if(newZombie != null)
+                    {
+                        int id = newZombie.getId();
+                        ZombieThread th = new ZombieThread(id);
+                        th.start();
+                        TextView label = findViewById(R.id.idMessage);
+                        label.setText(getResources().getString(R.string.game_over));
 
+                    }
+                }
+            }
         }
 
     }
