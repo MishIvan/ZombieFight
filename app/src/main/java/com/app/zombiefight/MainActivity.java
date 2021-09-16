@@ -4,8 +4,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.*;
 import android.util.Size;
+import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.gridlayout.widget.GridLayout;
 
@@ -13,6 +15,66 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+    private class Timer extends Thread
+    {
+        private long beginMillisecs;
+        private TimerHandler handler;
+
+        public Timer(long beginMillisecs)
+        {
+            this.beginMillisecs = beginMillisecs;
+            handler = new TimerHandler();
+        }
+        public void run()
+        {
+            int id = 0;
+            while(true)
+            {
+                if(System.currentTimeMillis() >= beginMillisecs+500L)
+                {
+                    id = GameField.seedZombie(false);
+                    Entity zombie = GameField.findZombieById(id);
+                    Message msg = handler.obtainMessage();
+                    Bundle bundle = new Bundle();
+                    bundle.putSize("coords", new Size(zombie.getRow(), zombie.getColumn()));
+                    msg.setData(bundle);
+                    handler.sendMessage(msg);
+                    break;
+                }
+            }
+            if(id != 0) {
+                ZombieThread th = new ZombieThread(id);
+                th.start();
+            }
+
+        }
+    }
+    private class TimerHandler extends Handler
+    {
+        public TimerHandler()
+        {
+            super(Looper.getMainLooper());
+        }
+        @Override
+        public void handleMessage(Message msg)
+        {
+            Bundle data = msg.getData();
+            Size coords = data.getSize("coords");
+            ImageView img = field.findViewWithTag(coords);
+            if(img != null)
+            {
+                Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.zombie);
+                img.setImageBitmap(bmp);
+
+            }
+
+        }
+
+
+    }
+    //
+    // поток и Handler управляющий движением зомби
+    //
     private class ZombieThread extends Thread
     {
         private int entityId;
@@ -25,17 +87,18 @@ public class MainActivity extends AppCompatActivity {
 
         public void run()
         {
-            Entity zombie = GameField.findZombieById(entityId);
-            if(zombie == null) return;
-            while(zombie.getStatus() != GameField.KILLED)
+            while(true)
             {
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(1000);
                 }
                 catch(Exception ex)
                 {
                     continue;
                 }
+                Entity zombie = GameField.findZombieById(entityId);
+                if(zombie == null) break;
+                if(zombie.getStatus() == GameField.KILLED) break;
                 int row = zombie.getRow();
                 int column = zombie.getColumn();
                 zombie.move();
@@ -98,15 +161,17 @@ public class MainActivity extends AppCompatActivity {
                         int id = newZombie.getId();
                         ZombieThread th = new ZombieThread(id);
                         th.start();
-                        TextView label = findViewById(R.id.idMessage);
-                        label.setText(getResources().getString(R.string.game_over));
-
+                        Toast tst = Toast.makeText(context, getResources().getString(R.string.game_over),
+                                Toast.LENGTH_LONG);
+                        tst.setGravity(Gravity.CENTER, 0, 0);
+                        tst.show();
                     }
                 }
             }
         }
 
     }
+    private android.content.Context context;
     private GridLayout field;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,8 +182,13 @@ public class MainActivity extends AppCompatActivity {
             ab.setDisplayShowHomeEnabled(true);
             ab.setIcon(R.drawable.zombie_icon);
         }
+        context = this;
         field = findViewById(R.id.idField);
-        InitGame(new Size(10,10));
+        android.util.DisplayMetrics dm = getResources().getDisplayMetrics();
+        int height = dm.heightPixels*160/dm.densityDpi-5*dm.densityDpi/160;
+        int width = dm.widthPixels*160/dm.densityDpi-5*dm.densityDpi/160;
+        int size = Math.min(width/32, height/32);
+        InitGame(new Size(size,size));
 
     }
     //инициализация игры
@@ -164,16 +234,27 @@ public class MainActivity extends AppCompatActivity {
                     int y = tag.getHeight();
                     int row = creature.getRow();
                     int column = creature.getColumn();
-                    creature.move(x, y);
+                    boolean beaten = creature.move(x, y);
                     if(creature.getStatus() == GameField.MOVING)
                     {
-                        TextView label = findViewById(R.id.idMessage);
-                        label.setText("Row:" + x + " Column:" + y);
                         ImageView oldimg = field.findViewWithTag(new Size(row,column));
                         Bitmap bmpold = BitmapFactory.decodeResource(getResources(), R.drawable.empty);
                         oldimg.setImageBitmap(bmpold);
                         Bitmap bmpnew = BitmapFactory.decodeResource(getResources(), R.drawable.man);
                         img.setImageBitmap(bmpnew);
+                    }
+                    // уничтожен зомби
+                    if(beaten)
+                    {
+                        TextView label = findViewById(R.id.idZCount);
+                        label.setText("Beaten: "+ GameField.getZombieBeaten());
+                        Toast tst = Toast.makeText(this, getResources().getString(R.string.baeten),
+                                Toast.LENGTH_SHORT);
+                        tst.setGravity(Gravity.CENTER, 0, 0);
+                        tst.show();
+                        Timer tm = new Timer(System.currentTimeMillis());
+                        tm.start();
+
                     }
                     return true;
                 });

@@ -31,6 +31,7 @@ public class GameField {
     private static char [][] gameField;
     private static int rows;
     private static int columns;
+    private static int zombieBeaten;
 
     public static void setGameField(Size fieldSize)
     {
@@ -53,6 +54,9 @@ public class GameField {
     public static void setZombie(int row, int column) { gameField[row][column] = ZOMBIE;}
     public static void setPerson(int row, int column) { gameField[row][column] = PERSON;}
     public static Entity getCreature() { return creature;}
+    public static int getZombieBeaten() {return zombieBeaten;}
+    public  static void increaseZombieBeaten() { zombieBeaten++;}
+
     public static void killCreature()
     {
         int row = creature.getRow();
@@ -81,7 +85,7 @@ public class GameField {
     }
 
     // появление зомби на поле
-    public static void seedZombie(boolean fromRow)
+    public static int seedZombie(boolean fromRow)
     {
         int col = getRandomColumn();
         int row = getRandomRow();
@@ -89,6 +93,7 @@ public class GameField {
                 new Entity(row, 0, ZOMBIE);
         gameField[fromRow ? 0 : row][fromRow ? col : 0] = ZOMBIE;
         zombies.add(zombie);
+        return zombie.getId();
 
     }
 

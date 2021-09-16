@@ -88,15 +88,22 @@ public class Entity {
                 status = GameField.STAYING;
         }
     }
-    public void move(int row, int column)
+    public boolean move(int row, int column)
     {
-        if(isZombie()) { status = GameField.STAYING; return;}
+        if(isZombie()) { status = GameField.STAYING; return false;}
         if(
              (currentRow == row && (column == currentColumn +1 || column == currentColumn -1))
           || (currentColumn == column && (row == currentRow - 1 || row == currentRow + 1))
         )
         {
             GameField.setEmpty(currentRow, currentColumn);
+            Entity zombie = GameField.findZombieByCoordinates(row, column);
+            if(zombie != null)
+            {
+                GameField.getZombies().remove(zombie);
+                GameField.increaseZombieBeaten();
+                return true;
+            }
             currentRow = row;
             currentColumn = column;
             GameField.setPerson(currentRow, currentColumn);
@@ -104,5 +111,6 @@ public class Entity {
         }
         else
             status = GameField.STAYING;
+        return false;
     }
 }
