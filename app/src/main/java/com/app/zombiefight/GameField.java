@@ -8,9 +8,9 @@ import java.util.ArrayList;
 // игровое поле - содержит информацию о расположении
 public class GameField {
     // список зомби
-    private static ArrayList<Entity> zombies;
+    private static ArrayList<Zombie> zombies;
     // человек
-    private static Entity creature;
+    private static Creature creature;
 
     // флаг занятия клетки игрового поля
     final static char ZOMBIE = 'z';
@@ -53,7 +53,7 @@ public class GameField {
     public static void setEmpty(int row, int column) { gameField[row][column] = FREE;}
     public static void setZombie(int row, int column) { gameField[row][column] = ZOMBIE;}
     public static void setPerson(int row, int column) { gameField[row][column] = PERSON;}
-    public static Entity getCreature() { return creature;}
+    public static Creature getCreature() { return creature;}
     public static int getZombieBeaten() {return zombieBeaten;}
     public  static void increaseZombieBeaten() { zombieBeaten++;}
 
@@ -61,12 +61,12 @@ public class GameField {
     {
         int row = creature.getRow();
         int col = creature.getColumn();
-        Entity zombie = new Entity(row, col, ZOMBIE);
+        Zombie zombie = new Zombie(row, col);
         gameField[row][col] = ZOMBIE;
         zombies.add(zombie);
         creature = null;
     }
-    public static ArrayList<Entity> getZombies() { return zombies;}
+    public static ArrayList<Zombie> getZombies() { return zombies;}
 
 
     // для определения случайной строки
@@ -89,8 +89,8 @@ public class GameField {
     {
         int col = getRandomColumn();
         int row = getRandomRow();
-        Entity zombie = fromRow ? new Entity(0, col, ZOMBIE) :
-                new Entity(row, 0, ZOMBIE);
+        Zombie zombie = fromRow ? new Zombie(0, col) :
+                new Zombie(row, 0);
         gameField[fromRow ? 0 : row][fromRow ? col : 0] = ZOMBIE;
         zombies.add(zombie);
         return zombie.getId();
@@ -102,23 +102,23 @@ public class GameField {
     {
         int row = rows/2-1;
         int col = columns - 1;
-        creature = new Entity(row, col, PERSON);
+        creature = new Creature(row, col);
         gameField[row][col] = PERSON;
     }
     // найти замби по координате
-    public static Entity findZombieByCoordinates(int row, int column)
+    public static Zombie findZombieByCoordinates(int row, int column)
     {
-        Entity ent = null;
-        for(Entity el : zombies)
+        Zombie ent = null;
+        for(Zombie el : zombies)
         {
             if (el.getRow() == row && el.getColumn() == column) { ent = el; break;}
         }
         return ent;
     }
-    public static Entity findZombieById(int id)
+    public static Zombie findZombieById(int id)
     {
-        Entity ent = null;
-        for(Entity el : zombies)
+        Zombie ent = null;
+        for(Zombie el : zombies)
         {
             if (el.getId() == id) { ent = el; break;}
         }

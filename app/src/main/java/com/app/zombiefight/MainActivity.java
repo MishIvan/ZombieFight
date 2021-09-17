@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
                 if(System.currentTimeMillis() >= beginMillisecs+500L)
                 {
                     id = GameField.seedZombie(false);
-                    Entity zombie = GameField.findZombieById(id);
+                    Zombie zombie = GameField.findZombieById(id);
                     Message msg = handler.obtainMessage();
                     Bundle bundle = new Bundle();
                     bundle.putSize("coords", new Size(zombie.getRow(), zombie.getColumn()));
@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
                 {
                     continue;
                 }
-                Entity zombie = GameField.findZombieById(entityId);
+                Zombie zombie = GameField.findZombieById(entityId);
                 if(zombie == null) break;
                 if(zombie.getStatus() == GameField.KILLED) break;
                 int row = zombie.getRow();
@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
                     img.setImageBitmap(bmp);
                 }
             }
-            Entity creature = GameField.getCreature();
+            Creature creature = GameField.getCreature();
             if(creature == null) return;
             if(creature.getStatus() == GameField.KILLED) {
                 int row = creature.getRow();
@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
                     Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.zombie);
                     img.setImageBitmap(bmp);
                     GameField.killCreature();
-                    Entity newZombie = GameField.findZombieByCoordinates(row, column);
+                    Zombie newZombie = GameField.findZombieByCoordinates(row, column);
                     if(newZombie != null)
                     {
                         int id = newZombie.getId();
@@ -173,6 +173,7 @@ public class MainActivity extends AppCompatActivity {
     }
     private android.content.Context context;
     private GridLayout field;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -201,8 +202,8 @@ public class MainActivity extends AppCompatActivity {
         GameField.seedZombie(true);
         GameField.seedZombie(false);
         GameField.seedPerson();
-        ArrayList<Entity> zombies = GameField.getZombies();
-        for(Entity zombie : zombies)
+        ArrayList<Zombie> zombies = GameField.getZombies();
+        for(Zombie zombie : zombies)
         {
             ZombieThread zt = new ZombieThread(zombie.getId());
             zt.start();
@@ -225,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
                 image.setTag(new Size(i,j));
 
                 image.setOnTouchListener((v, event) -> {
-                    Entity creature = GameField.getCreature();
+                    Creature creature = GameField.getCreature();
                     if(creature == null) return false;
                     if(creature.getStatus() == GameField.KILLED) return false;
                     ImageView img = (ImageView) v;
