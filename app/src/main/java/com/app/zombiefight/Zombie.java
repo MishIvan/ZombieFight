@@ -1,7 +1,7 @@
 package com.app.zombiefight;
 
 public class Zombie extends Entity{
-    private int id; // идентификатор зомби
+    final private int id; // идентификатор зомби
     public Zombie(int row, int column)
     {
         super(row, column);
@@ -15,9 +15,11 @@ public class Zombie extends Entity{
     @Override
     public void move()
     {
-            int direction = (int)Math.round(Math.random()*(4.001 - 1.0)+1.0);
             Zombie zfind;
             Creature creature = GameField.getCreature();
+            int direction = findDirection(creature);
+            if(direction == 0)
+                    direction = (int)Math.round(Math.random()*(4.001 - 1.0)+1.0);
             int rows = GameField.getRows() - 1;
             int columns = GameField.getColumns() - 1;
             int oldRow = currentRow;
@@ -66,6 +68,34 @@ public class Zombie extends Entity{
             else
                 status = GameField.STAYING;
 
+    }
+    // определить направление зомби к человечку
+    private int findDirection(Creature creature)
+    {
+        if(creature == null) return 0;
+        if(creature.getStatus() == GameField.KILLED) return 0;
+        int cx = creature.getRow();
+        int cy = creature.getColumn();
+        int dy = cx - currentRow;
+        int dx = cy - currentColumn;
+        if(dx >= 0 && dy >= 0)
+        {
+            return dy <= dx ? GameField.RIGHT : GameField.DOWN;
+
+        }
+        else if( dx >= 0 && dy <= 0)
+        {
+            return Math.abs(dy) <= dx ? GameField.RIGHT : GameField.UP;
+        }
+        else if( dx <=0 && dy <= 0)
+        {
+            return Math.abs(dy) <= Math.abs(dx) ? GameField.LEFT : GameField.UP;
+        }
+        else if(dx <= 0 && dy >=0)
+        {
+            return dy <= Math.abs(dx) ? GameField.LEFT : GameField.UP;
+        }
+        else return 0;
     }
 
 

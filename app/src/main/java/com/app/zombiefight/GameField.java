@@ -43,11 +43,13 @@ public class GameField {
                 gameField[i][j] = FREE;
            zombies =  new ArrayList<>();
     }
+    // очистка игрового поля
     public static void clearGameField()
     {
         for(int i=0;i<rows;i++)
             for(int j=0; j<columns;j++)
                 gameField[i][j] = FREE;
+            zombieBeaten = 0;
 
     }
     // ряды игрового поля

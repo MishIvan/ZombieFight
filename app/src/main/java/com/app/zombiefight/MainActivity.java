@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         }
         public void run()
         {
-            int id = 0;
+            int id;
             while(true)
             {
                 if(System.currentTimeMillis() >= beginMillisecs+500L)
@@ -175,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+    final long INITIAL_DELAY = 1500L;
     private android.content.Context context;
     private GridLayout field;
     private long delayMoving;
@@ -189,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
             ab.setIcon(R.drawable.zombie_icon);
         }
         context = this;
-        delayMoving = 1000L;
+        delayMoving = INITIAL_DELAY;
         field = findViewById(R.id.idField);
         android.util.DisplayMetrics dm = getResources().getDisplayMetrics();
         int height = dm.heightPixels*160/dm.densityDpi-2*5*dm.densityDpi/160;
@@ -281,7 +282,7 @@ public class MainActivity extends AppCompatActivity {
         GameField.seedZombie(false);
         GameField.seedPerson();
         ArrayList<Zombie> zombies = GameField.getZombies();
-        delayMoving = 1000L;
+        delayMoving = INITIAL_DELAY;
         for(Zombie zombie : zombies)
         {
             ZombieThread zt = new ZombieThread(zombie.getId());
@@ -304,6 +305,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
+        TextView cnttxt = findViewById(R.id.idZCount);
+        cnttxt.setText("Beaten: "+ GameField.getZombieBeaten());
 
     }
 
