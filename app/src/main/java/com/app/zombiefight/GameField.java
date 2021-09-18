@@ -43,6 +43,13 @@ public class GameField {
                 gameField[i][j] = FREE;
            zombies =  new ArrayList<>();
     }
+    public static void clearGameField()
+    {
+        for(int i=0;i<rows;i++)
+            for(int j=0; j<columns;j++)
+                gameField[i][j] = FREE;
+
+    }
     // ряды игрового поля
     public static int getRows() { return rows;}
     // колонки игрового поля

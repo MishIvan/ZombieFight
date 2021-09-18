@@ -28,7 +28,7 @@
                 android:ems="10"
                 android:id="@+id/idZCountMax" app:layout_column="1" app:layout_row="0" android:editable="false"
                 android:clickable="false" android:layout_marginLeft="5dp" android:textColor="@color/bloody"
-                android:textAlignment="viewEnd" android:textStyle="bold"/>
+                android:textAlignment="textEnd" android:textStyle="bold"/>
     </androidx.gridlayout.widget.GridLayout>
     <androidx.gridlayout.widget.GridLayout
             android:layout_width="match_parent"

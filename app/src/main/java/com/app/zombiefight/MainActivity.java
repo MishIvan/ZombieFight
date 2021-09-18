@@ -5,9 +5,13 @@ import android.graphics.BitmapFactory;
 import android.os.*;
 import android.util.Size;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.gridlayout.widget.GridLayout;
 
@@ -90,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
             while(true)
             {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(delayMoving);
                 }
                 catch(Exception ex)
                 {
@@ -173,6 +177,7 @@ public class MainActivity extends AppCompatActivity {
     }
     private android.content.Context context;
     private GridLayout field;
+    private long delayMoving;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -184,9 +189,10 @@ public class MainActivity extends AppCompatActivity {
             ab.setIcon(R.drawable.zombie_icon);
         }
         context = this;
+        delayMoving = 1000L;
         field = findViewById(R.id.idField);
         android.util.DisplayMetrics dm = getResources().getDisplayMetrics();
-        int height = dm.heightPixels*160/dm.densityDpi-5*dm.densityDpi/160;
+        int height = dm.heightPixels*160/dm.densityDpi-2*5*dm.densityDpi/160;
         int width = dm.widthPixels*160/dm.densityDpi-5*dm.densityDpi/160;
         int size = Math.min(width/32, height/32);
         InitGame(new Size(size,size));
@@ -253,6 +259,7 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.LENGTH_SHORT);
                         tst.setGravity(Gravity.CENTER, 0, 0);
                         tst.show();
+                        if(delayMoving >100L) delayMoving -= 100L;
                         Timer tm = new Timer(System.currentTimeMillis());
                         tm.start();
 
@@ -264,5 +271,58 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+    // начинает новую игру
+    private void startNewGame()
+    {
+        GameField.getZombies().clear();
+        GameField.clearGameField();
+        System.gc();
+        GameField.seedZombie(true);
+        GameField.seedZombie(false);
+        GameField.seedPerson();
+        ArrayList<Zombie> zombies = GameField.getZombies();
+        delayMoving = 1000L;
+        for(Zombie zombie : zombies)
+        {
+            ZombieThread zt = new ZombieThread(zombie.getId());
+            zt.start();
+        }
+        int n = GameField.getRows();
+        int m = GameField.getColumns();
+        for(int i=0;i<n;i++)
+        {
+            for(int j=0;j<m;j++)
+            {
+                int id;
+                if(GameField.isPerson(i, j)) id = R.drawable.man;
+                else if(GameField.isZombie(i, j)) id = R.drawable.zombie;
+                else id = R.drawable.empty;
+                Bitmap bmp = BitmapFactory.decodeResource(getResources(), id);
+                ImageView image = field.findViewWithTag(new Size(i, j));
+                image.setImageBitmap(bmp);
 
+            }
+
+        }
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater minf = getMenuInflater();
+        minf.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch(item.getItemId())
+        {
+            case R.id.start_new_game:
+                startNewGame();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }
