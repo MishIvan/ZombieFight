@@ -5,4 +5,5 @@
     <string name="newc">newCoordinates</string>
     <string name="game_over">Game over!</string>
     <string name="baeten">Ha-ha! I\'ve beaten zombie!</string>
+    <string name="Settings">Settings</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.app.zombiefight;
 
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.*;
@@ -166,24 +167,30 @@ public class MainActivity extends AppCompatActivity {
                         ZombieThread th = new ZombieThread(id);
                         th.start();
                         String sover = getResources().getString(R.string.game_over);
-                        /*Toast tst = Toast.makeText(context, sover ,
-                                Toast.LENGTH_LONG);
-                        tst.setGravity(Gravity.CENTER, 0, 0);
-                        tst.show();*/
                         TextView level_text = findViewById(R.id.level);
                         level_text.setText(sover);
+                        int beaten = GameField.getZombieBeaten();
+                        if( beaten > maxBeaten )
+                        {
+                            maxBeaten = beaten;
+                            writeSharedPreferences();
+                        }
                     }
                 }
             }
         }
 
     }
+    //
+    // методы и члены деятельности
+    //
     final long INITIAL_DELAY = 2000L;
     final long DELAY_STEP = 200L;
     private android.content.Context context;
     private GridLayout field;
     private long delayMoving;
     private int level = 1;
+    private int maxBeaten;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -198,6 +205,7 @@ public class MainActivity extends AppCompatActivity {
         delayMoving = INITIAL_DELAY;
         level = 1;
         field = findViewById(R.id.idField);
+        readSharedPreferences();
         android.util.DisplayMetrics dm = getResources().getDisplayMetrics();
         int height = dm.heightPixels*160/dm.densityDpi-2*5*dm.densityDpi/160;
         int width = dm.widthPixels*160/dm.densityDpi-5*dm.densityDpi/160;
@@ -284,6 +292,8 @@ public class MainActivity extends AppCompatActivity {
         }
         TextView level_text = findViewById(R.id.level);
         level_text.setText("Level " + level);
+        TextView maxbeaten_text = findViewById(R.id.idZCountMax);
+        maxbeaten_text.setText("MaxBeaten: "+maxBeaten);
     }
     // начинает новую игру
     private void startNewGame()
@@ -320,6 +330,14 @@ public class MainActivity extends AppCompatActivity {
         }
         TextView cnttxt = findViewById(R.id.idZCount);
         cnttxt.setText("Beaten: "+ GameField.getZombieBeaten());
+        TextView level_text = findViewById(R.id.level);
+        readSharedPreferences();
+        level = 1;
+        delayMoving = INITIAL_DELAY;
+        level_text.setText("Level " + level);
+        TextView maxbeaten_text = findViewById(R.id.idZCountMax);
+        maxbeaten_text.setText("MaxBeaten: "+maxBeaten);
+
 
     }
 
@@ -340,5 +358,21 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+    // считывать параметры задачи
+    private void readSharedPreferences()
+    {
+        String name = getResources().getString(R.string.Settings);
+        SharedPreferences sharedPreferences = getSharedPreferences(name, MODE_PRIVATE);
+        sharedPreferences.getInt("MaxBeaten", 0);
+
+    }
+    private void writeSharedPreferences()
+    {
+        String name = getResources().getString(R.string.Settings);
+        SharedPreferences sharedPreferences = getSharedPreferences(name, MODE_PRIVATE);
+        SharedPreferences.Editor edit = sharedPreferences.edit();
+        edit.putInt("MaxBeaten", maxBeaten);
+        edit.commit();
     }
 }
