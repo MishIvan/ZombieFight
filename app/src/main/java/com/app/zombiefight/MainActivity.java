@@ -165,20 +165,25 @@ public class MainActivity extends AppCompatActivity {
                         int id = newZombie.getId();
                         ZombieThread th = new ZombieThread(id);
                         th.start();
-                        Toast tst = Toast.makeText(context, getResources().getString(R.string.game_over),
+                        String sover = getResources().getString(R.string.game_over);
+                        /*Toast tst = Toast.makeText(context, sover ,
                                 Toast.LENGTH_LONG);
                         tst.setGravity(Gravity.CENTER, 0, 0);
-                        tst.show();
+                        tst.show();*/
+                        TextView level_text = findViewById(R.id.level);
+                        level_text.setText(sover);
                     }
                 }
             }
         }
 
     }
-    final long INITIAL_DELAY = 1500L;
+    final long INITIAL_DELAY = 2000L;
+    final long DELAY_STEP = 200L;
     private android.content.Context context;
     private GridLayout field;
     private long delayMoving;
+    private int level = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -191,6 +196,7 @@ public class MainActivity extends AppCompatActivity {
         }
         context = this;
         delayMoving = INITIAL_DELAY;
+        level = 1;
         field = findViewById(R.id.idField);
         android.util.DisplayMetrics dm = getResources().getDisplayMetrics();
         int height = dm.heightPixels*160/dm.densityDpi-2*5*dm.densityDpi/160;
@@ -258,9 +264,14 @@ public class MainActivity extends AppCompatActivity {
                         label.setText("Beaten: "+ GameField.getZombieBeaten());
                         Toast tst = Toast.makeText(this, getResources().getString(R.string.baeten),
                                 Toast.LENGTH_SHORT);
-                        tst.setGravity(Gravity.CENTER, 0, 0);
+                        tst.setGravity(Gravity.TOP, 0, 0);
                         tst.show();
-                        if(delayMoving >100L) delayMoving -= 100L;
+                        int zbeaten = GameField.getZombieBeaten();
+                        level  = zbeaten / 3 + 1;
+                        if(level >= 10) level = 10;
+                        delayMoving = level < 10 ? INITIAL_DELAY - (level - 1)*DELAY_STEP : 200L;
+                        TextView text_level = findViewById(R.id.level);
+                        text_level.setText("Level "+level);
                         Timer tm = new Timer(System.currentTimeMillis());
                         tm.start();
 
@@ -271,6 +282,8 @@ public class MainActivity extends AppCompatActivity {
                 field.addView(image, pars);
             }
         }
+        TextView level_text = findViewById(R.id.level);
+        level_text.setText("Level " + level);
     }
     // начинает новую игру
     private void startNewGame()

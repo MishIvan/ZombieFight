@@ -12,24 +12,57 @@
             android:layout_height="wrap_content"
             app:rowCount="1"
             app:columnCount="2"
-            android:textAlignment="viewStart" android:background="@color/black">
+            android:background="@color/black"
+            android:layout_gravity="fill">
 
-        <EditText
+        <TextView
                 android:text="Beaten: 0"
-                android:layout_width="193dp"
-                android:layout_height="wrap_content" android:id="@+id/idZCount"
-                app:layout_column="0" app:layout_row="0" android:clickable="false" android:editable="false"
-                android:layout_marginRight="5dp" android:textColor="@color/bloody" android:textStyle="bold"/>
-        <EditText
-                android:layout_width="195dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/idZCount"
+                app:layout_column="0"
+                app:layout_row="0"
+                android:layout_marginRight="5dp"
+                android:layout_marginLeft="5dp"
+                android:textColor="@color/bloody"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textAlignment="viewStart"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:gravity="start"
+                app:layout_gravity="left"/>
+        <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName"
                 android:text="Max Beaten: 0"
-                android:ems="10"
-                android:id="@+id/idZCountMax" app:layout_column="1" app:layout_row="0" android:editable="false"
-                android:clickable="false" android:layout_marginLeft="5dp" android:textColor="@color/bloody"
-                android:textAlignment="textEnd" android:textStyle="bold"/>
+                android:id="@+id/idZCountMax"
+                app:layout_column="1"
+                app:layout_row="0"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:textColor="@color/bloody"
+                android:textAlignment="viewEnd"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+
+                app:layout_gravity="right"/>
     </androidx.gridlayout.widget.GridLayout>
+    <TextView
+            android:text="Level"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/level"
+            android:background="@android:color/black"
+            android:textColor="@color/bloody"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:textAlignment="center"/>
     <androidx.gridlayout.widget.GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content" android:id="@+id/idField" android:minHeight="400dp"
