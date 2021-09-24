@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
             {
                 if(System.currentTimeMillis() >= beginMillisecs+500L)
                 {
-                    id = GameField.seedZombie(false);
+                    id = GameField.seedZombie(GameField.LEFT);
                     Zombie zombie = GameField.findZombieById(id);
                     Message msg = handler.obtainMessage();
                     Bundle bundle = new Bundle();
@@ -194,6 +194,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.SplashScreen);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         androidx.appcompat.app.ActionBar ab = getSupportActionBar();
@@ -208,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
         readSharedPreferences();
         android.util.DisplayMetrics dm = getResources().getDisplayMetrics();
         int height = dm.heightPixels*160/dm.densityDpi-2*5*dm.densityDpi/160;
-        int width = dm.widthPixels*160/dm.densityDpi-5*dm.densityDpi/160;
+        int width = dm.widthPixels*160/dm.densityDpi-2*5*dm.densityDpi/160;
         int size = Math.min(width/32, height/32);
         InitGame(new Size(size,size));
 
@@ -220,8 +221,8 @@ public class MainActivity extends AppCompatActivity {
         int m = GameField.getColumns();
         field.setRowCount(n);
         field.setColumnCount(m);
-        GameField.seedZombie(true);
-        GameField.seedZombie(false);
+        GameField.seedZombie(GameField.LEFT);
+        GameField.seedZombie(GameField.DOWN);
         GameField.seedPerson();
         ArrayList<Zombie> zombies = GameField.getZombies();
         for(Zombie zombie : zombies)
@@ -301,8 +302,8 @@ public class MainActivity extends AppCompatActivity {
         GameField.getZombies().clear();
         GameField.clearGameField();
         System.gc();
-        GameField.seedZombie(true);
-        GameField.seedZombie(false);
+        GameField.seedZombie(GameField.LEFT);
+        GameField.seedZombie(GameField.DOWN);
         GameField.seedPerson();
         ArrayList<Zombie> zombies = GameField.getZombies();
         delayMoving = INITIAL_DELAY;
@@ -359,14 +360,15 @@ public class MainActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-    // считывать параметры задачи
+    // считывать параметры приложения
     private void readSharedPreferences()
     {
         String name = getResources().getString(R.string.Settings);
         SharedPreferences sharedPreferences = getSharedPreferences(name, MODE_PRIVATE);
-        sharedPreferences.getInt("MaxBeaten", 0);
+        maxBeaten = sharedPreferences.getInt("MaxBeaten", 0);
 
     }
+    // записать параметры приложения
     private void writeSharedPreferences()
     {
         String name = getResources().getString(R.string.Settings);

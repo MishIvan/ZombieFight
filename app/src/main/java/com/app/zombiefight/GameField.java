@@ -94,13 +94,23 @@ public class GameField {
     }
 
     // появление зомби на поле
-    public static int seedZombie(boolean fromRow)
+    public static int seedZombie(int direction)
     {
         int col = getRandomColumn();
         int row = getRandomRow();
-        Zombie zombie = fromRow ? new Zombie(0, col) :
-                new Zombie(row, 0);
-        gameField[fromRow ? 0 : row][fromRow ? col : 0] = ZOMBIE;
+        switch(direction)
+        {
+            case GameField.LEFT:
+                col = 0; break;
+            case GameField.RIGHT:
+                col = columns - 1; break;
+            case GameField.UP:
+                row = 0; break;
+            case GameField.DOWN:
+                row = rows - 1; break;
+        }
+        Zombie zombie =  new Zombie(row, col);
+        gameField[row][col] = ZOMBIE;
         zombies.add(zombie);
         return zombie.getId();
 
