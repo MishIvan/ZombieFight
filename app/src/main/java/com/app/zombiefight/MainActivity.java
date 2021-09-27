@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
             else interval = 200L;
             while(true)
             {
+                if(stopped) continue;
                 if(System.currentTimeMillis() >= beginMillisecs+interval)
                 {
                     id = GameField.seedZombie(Entity.LEFT);
@@ -96,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
         {
             while(true)
             {
+                if(stopped) continue;
                 try {
                     Thread.sleep(delayMoving);
                 }
@@ -194,6 +196,7 @@ public class MainActivity extends AppCompatActivity {
     private int level = 1;
     private int maxBeaten;
     private boolean start;
+    private boolean stopped;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -211,6 +214,7 @@ public class MainActivity extends AppCompatActivity {
         field = findViewById(R.id.idField);
         readSharedPreferences();
         start = true;
+        stopped = false;
         /*android.util.DisplayMetrics dm = getResources().getDisplayMetrics();
         int height = dm.heightPixels*160/dm.densityDpi-2*5*dm.densityDpi/160;
         int width = dm.widthPixels*160/dm.densityDpi-2*5*dm.densityDpi/160;
@@ -371,10 +375,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    @Deprecated
     protected void onPostResume()
     {
         super.onPostResume();
+        stopped = false;
         if(start)
         {
             android.util.DisplayMetrics dm = getResources().getDisplayMetrics();
@@ -395,6 +399,18 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    protected void OnStart()
+    {
+        super.onStart();
+        stopped = false;
+    }
+    protected void onStop()
+    {
+        super.onStop();
+        stopped = true;
+    }
+
 
     // считывать параметры приложения
     private void readSharedPreferences()
