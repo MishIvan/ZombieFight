@@ -32,19 +32,33 @@ public class MainActivity extends AppCompatActivity {
         }
         public void run()
         {
+            int direction = GameField.LEFT;
+            int n;
+            if(level <3 && level>=1)
+                n = 1;
+            else
+                n = 2;
             int id;
+            int i = 1;
             while(true)
             {
-                if(System.currentTimeMillis() >= beginMillisecs+500L)
+                switch(i)
                 {
-                    id = GameField.seedZombie(GameField.LEFT);
+                    case 1:
+                        direction = GameField.LEFT; break;
+                    case 2:
+                        direction = GameField.DOWN; break;
+                }
+                if(System.currentTimeMillis() >= beginMillisecs+500L*i)
+                {
+                    id = GameField.seedZombie(direction);
                     Zombie zombie = GameField.findZombieById(id);
                     Message msg = handler.obtainMessage();
                     Bundle bundle = new Bundle();
                     bundle.putSize("coords", new Size(zombie.getRow(), zombie.getColumn()));
                     msg.setData(bundle);
                     handler.sendMessage(msg);
-                    break;
+                    if((++i) > n) break;
                 }
             }
             if(id != 0) {
