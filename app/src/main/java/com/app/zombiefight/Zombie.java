@@ -29,21 +29,21 @@ public class Zombie extends Entity{
             switch (direction)
             {
                 // вверх
-                case GameField.UP:
+                case Entity.UP:
                     newRow = oldRow == 0 ? rows : oldRow - 1;
                     newColumn = oldColumn;
                     break;
                 // вниз
-                case GameField.DOWN:
+                case Entity.DOWN:
                     newRow = oldRow == rows ? 0 : oldRow + 1;
                     newColumn = oldColumn;
                     break;
                 // влево
-                case GameField.LEFT:
+                case Entity.LEFT:
                     newColumn = oldColumn == 0 ? columns : oldColumn - 1;
                     newRow = oldRow;
                     break;
-                case GameField.RIGHT:
+                case Entity.RIGHT:
                     newColumn = oldColumn == columns ? 0 : oldColumn + 1;
                     newRow = oldRow;
                     break;
@@ -54,46 +54,46 @@ public class Zombie extends Entity{
                 int rowCreature = creature == null ? -1 :creature.getRow();
                 if(newRow == rowCreature && newColumn == colCreature )
                 {
-                    GameField.getCreature().setStatus(GameField.KILLED);
-                    status = GameField.STAYING;
+                    GameField.getCreature().setStatus(Entity.KILLED);
+                    status = Entity.STAYING;
                 }
                 else {
                     GameField.setEmpty(oldRow, oldColumn);
                     currentRow = newRow;
                     currentColumn = newColumn;
                     GameField.setZombie(currentRow, currentColumn);
-                    status = GameField.MOVING;
+                    status = Entity.MOVING;
                 }
             }
             else
-                status = GameField.STAYING;
+                status = Entity.STAYING;
 
     }
     // определить направление зомби к человечку
     private int findDirection(Creature creature)
     {
         if(creature == null) return 0;
-        if(creature.getStatus() == GameField.KILLED) return 0;
+        if(creature.getStatus() == Entity.KILLED) return 0;
         int cx = creature.getRow();
         int cy = creature.getColumn();
         int dy = cx - currentRow;
         int dx = cy - currentColumn;
         if(dx >= 0 && dy >= 0)
         {
-            return dy <= dx ? GameField.RIGHT : GameField.DOWN;
+            return dy <= dx ? Entity.RIGHT : Entity.DOWN;
 
         }
         else if( dx >= 0 && dy <= 0)
         {
-            return Math.abs(dy) <= dx ? GameField.RIGHT : GameField.UP;
+            return Math.abs(dy) <= dx ? Entity.RIGHT : Entity.UP;
         }
         else if( dx <=0 && dy <= 0)
         {
-            return Math.abs(dy) <= Math.abs(dx) ? GameField.LEFT : GameField.UP;
+            return Math.abs(dy) <= Math.abs(dx) ? Entity.LEFT : Entity.UP;
         }
         else if(dx <= 0 && dy >=0)
         {
-            return dy <= Math.abs(dx) ? GameField.LEFT : GameField.UP;
+            return dy <= Math.abs(dx) ? Entity.LEFT : Entity.UP;
         }
         else return 0;
     }

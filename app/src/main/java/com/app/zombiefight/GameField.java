@@ -17,17 +17,6 @@ public class GameField {
     final static char PERSON = 'p';
     final static char FREE = ' ';
 
-    // направление движения
-    final static int LEFT = 1;
-    final static int UP = 2;
-    final static int RIGHT = 3;
-    final static int DOWN = 4;
-
-    // статус сущности
-    final static int MOVING = 1;
-    final static int STAYING = 2;
-    final static int KILLED = 3;
-
     private static char [][] gameField;
     private static int rows;
     private static int columns;
@@ -35,8 +24,8 @@ public class GameField {
 
     public static void setGameField(Size fieldSize)
     {
-        rows = fieldSize.getWidth();
-        columns = fieldSize.getHeight();
+        rows = fieldSize.getHeight();
+        columns = fieldSize.getWidth();
         gameField = new char[rows][columns];
         for(int i=0;i<rows;i++)
             for(int j=0; j<columns;j++)
@@ -100,13 +89,13 @@ public class GameField {
         int row = getRandomRow();
         switch(direction)
         {
-            case GameField.LEFT:
+            case Entity.LEFT:
                 col = 0; break;
-            case GameField.RIGHT:
+            case Entity.RIGHT:
                 col = columns - 1; break;
-            case GameField.UP:
+            case Entity.UP:
                 row = 0; break;
-            case GameField.DOWN:
+            case Entity.DOWN:
                 row = rows - 1; break;
         }
         Zombie zombie =  new Zombie(row, col);

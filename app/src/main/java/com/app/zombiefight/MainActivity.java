@@ -5,11 +5,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.*;
 import android.util.Size;
-import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.view.*;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -33,11 +31,15 @@ public class MainActivity extends AppCompatActivity {
         public void run()
         {
             int id;
+            long interval = 500L;
+            if(level >=1 && level<4) interval = 500L;
+            else if(level >=4 && level <8) interval = 300L;
+            else interval = 200L;
             while(true)
             {
-                if(System.currentTimeMillis() >= beginMillisecs+500L)
+                if(System.currentTimeMillis() >= beginMillisecs+interval)
                 {
-                    id = GameField.seedZombie(GameField.LEFT);
+                    id = GameField.seedZombie(Entity.LEFT);
                     Zombie zombie = GameField.findZombieById(id);
                     Message msg = handler.obtainMessage();
                     Bundle bundle = new Bundle();
@@ -103,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 Zombie zombie = GameField.findZombieById(entityId);
                 if(zombie == null) break;
-                if(zombie.getStatus() == GameField.KILLED) break;
+                if(zombie.getStatus() == Entity.KILLED) break;
                 int row = zombie.getRow();
                 int column = zombie.getColumn();
                 zombie.move();
@@ -132,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
         {
             Entity zombie = GameField.findZombieById(entityId);
             if(zombie == null) return;
-            if(zombie.getStatus() == GameField.KILLED) return;
+            if(zombie.getStatus() == Entity.KILLED) return;
             Bundle data = msg.getData();
             Size _old = data.getSize(getResources().getString(R.string.oldc));
             Size _new = data.getSize(getResources().getString(R.string.newc));
@@ -143,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
                 img.setImageBitmap(bmp);
             }
 
-            if(zombie.getStatus() != GameField.KILLED) {
+            if(zombie.getStatus() != Entity.KILLED) {
                 img = field.findViewWithTag(_new);
                 if (img != null) {
                     Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.zombie);
@@ -152,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
             }
             Creature creature = GameField.getCreature();
             if(creature == null) return;
-            if(creature.getStatus() == GameField.KILLED) {
+            if(creature.getStatus() == Entity.KILLED) {
                 int row = creature.getRow();
                 int column = creature.getColumn();
                 img = field.findViewWithTag(new Size(row ,column ));
@@ -191,6 +193,7 @@ public class MainActivity extends AppCompatActivity {
     private long delayMoving;
     private int level = 1;
     private int maxBeaten;
+    private boolean start;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,11 +210,15 @@ public class MainActivity extends AppCompatActivity {
         level = 1;
         field = findViewById(R.id.idField);
         readSharedPreferences();
-        android.util.DisplayMetrics dm = getResources().getDisplayMetrics();
+        start = true;
+        /*android.util.DisplayMetrics dm = getResources().getDisplayMetrics();
         int height = dm.heightPixels*160/dm.densityDpi-2*5*dm.densityDpi/160;
         int width = dm.widthPixels*160/dm.densityDpi-2*5*dm.densityDpi/160;
         int size = Math.min(width/32, height/32);
-        InitGame(new Size(size,size));
+        TextView gl =  findViewById(R.id.level);
+        int w = gl.getMeasuredWidth();
+        int h = gl.getMeasuredHeight();
+        InitGame(new Size(size,size));*/
 
     }
     //инициализация игры
@@ -221,8 +228,9 @@ public class MainActivity extends AppCompatActivity {
         int m = GameField.getColumns();
         field.setRowCount(n);
         field.setColumnCount(m);
-        GameField.seedZombie(GameField.LEFT);
-        GameField.seedZombie(GameField.DOWN);
+        GameField.seedZombie(Entity.LEFT);
+        GameField.seedZombie(Entity.DOWN);
+        GameField.seedZombie(Entity.UP);
         GameField.seedPerson();
         ArrayList<Zombie> zombies = GameField.getZombies();
         for(Zombie zombie : zombies)
@@ -250,7 +258,7 @@ public class MainActivity extends AppCompatActivity {
                 image.setOnTouchListener((v, event) -> {
                     Creature creature = GameField.getCreature();
                     if(creature == null) return false;
-                    if(creature.getStatus() == GameField.KILLED) return false;
+                    if(creature.getStatus() == Entity.KILLED) return false;
                     ImageView img = (ImageView) v;
                     Size tag = (Size) img.getTag();
                     int x = tag.getWidth();
@@ -258,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
                     int row = creature.getRow();
                     int column = creature.getColumn();
                     boolean beaten = creature.move(x, y);
-                    if(creature.getStatus() == GameField.MOVING)
+                    if(creature.getStatus() == Entity.MOVING)
                     {
                         ImageView oldimg = field.findViewWithTag(new Size(row,column));
                         Bitmap bmpold = BitmapFactory.decodeResource(getResources(), R.drawable.empty);
@@ -302,8 +310,9 @@ public class MainActivity extends AppCompatActivity {
         GameField.getZombies().clear();
         GameField.clearGameField();
         System.gc();
-        GameField.seedZombie(GameField.LEFT);
-        GameField.seedZombie(GameField.DOWN);
+        GameField.seedZombie(Entity.LEFT);
+        GameField.seedZombie(Entity.DOWN);
+        GameField.seedZombie(Entity.UP);
         GameField.seedPerson();
         ArrayList<Zombie> zombies = GameField.getZombies();
         delayMoving = INITIAL_DELAY;
@@ -360,6 +369,33 @@ public class MainActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    @Override
+    @Deprecated
+    protected void onPostResume()
+    {
+        super.onPostResume();
+        if(start)
+        {
+            android.util.DisplayMetrics dm = getResources().getDisplayMetrics();
+            float density = dm.density;
+            int _w = dm.widthPixels;
+            int _h = dm.heightPixels;
+            GridLayout beaten = findViewById(R.id.beaten);
+            beaten.measure(0,0);
+            int hg = (int)((float)beaten.getMeasuredHeight()*density);
+
+            TextView _level =  findViewById(R.id.level);
+            _level.measure(0,0);
+            int h =  (int)((float)_level.getMeasuredHeight()*density);
+            int nw = (_w - (int)(2.0f*5.0f*density))/ ((int)(32.0f*density));
+            int nh = (_h - hg - h - (int)(4.0f*5.0f*density))/((int)(32.0f*density));
+            InitGame(new Size(nw,nh));
+            start = false;
+        }
+
+    }
+
     // считывать параметры приложения
     private void readSharedPreferences()
     {

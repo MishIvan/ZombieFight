@@ -1,6 +1,17 @@
 package com.app.zombiefight;
 
 public class Entity {
+    // направление движения
+    final static int LEFT = 1;
+    final static int UP = 2;
+    final static int RIGHT = 3;
+    final static int DOWN = 4;
+
+    // статус сущности
+    final static int MOVING = 1;
+    final static int STAYING = 2;
+    final static int KILLED = 3;
+
     // координаты сущности
     protected int currentRow;
     protected int currentColumn;
@@ -10,7 +21,7 @@ public class Entity {
     {
         currentRow = row;
         currentColumn = column;
-        status = GameField.STAYING;
+        status = STAYING;
     }
 
 

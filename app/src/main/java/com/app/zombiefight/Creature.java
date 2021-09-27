@@ -25,10 +25,10 @@ public class Creature extends Entity{
             currentRow = row;
             currentColumn = column;
             GameField.setPerson(currentRow, currentColumn);
-            status = GameField.MOVING;
+            status = Entity.MOVING;
         }
         else
-            status = GameField.STAYING;
+            status = Entity.STAYING;
         return false;
     }
 
