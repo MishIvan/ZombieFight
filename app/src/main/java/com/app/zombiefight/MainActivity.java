@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
 
         // выпадающий список выбора языка
         Spinner spinner = findViewById(R.id.lang_choice);
-        String [] langs = {"EN", "RU", "FI"};
+        String [] langs = getResources().getStringArray(R.array.languages);
         ArrayAdapter<String> adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item,
                 langs);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
