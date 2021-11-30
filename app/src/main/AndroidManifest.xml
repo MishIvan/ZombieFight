@@ -2,12 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.app.zombiefight"
             android:versionCode="1"
-            android:versionName="@string/app_version_name">
+            android:versionName="1.1.0">
 
     <application
             android:allowBackup="true"
             android:icon="@drawable/zombie_icon"
-            android:label= "@string/app_name"
+            android:label= "Zombie Fight"
             android:roundIcon="@drawable/zombie_icon"
             android:supportsRtl="true"
             android:theme="@style/Theme.ZombieFight">

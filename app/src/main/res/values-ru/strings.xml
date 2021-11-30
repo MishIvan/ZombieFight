@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Битва с зомби</string>
+    <string name="game_over">Игра окончена</string>
+    <string name="destroyed">Ха-ха! Я уничтожил зомби</string>
+    <string name="stop_item">Остановить игру</string>
+    <string name="start_item">Возобновить игру</string>
+    <string name="app_version_name">1.0.0</string>
+    <string name="oldc">oldCoordinates</string>
+    <string name="newc">newCoordinates</string>
+    <string name="beaten">Уничтожено</string>
+    <string name="max_beaten">МаксУничтожено</string>
+    <string name="level">Уровень</string>
+    <string name="start_game">Начать новую игру</string>
+    <string name="Settings">Settings</string>
+    <string name="en_lang">Englanninkieli</string>
+    <string name="ru_lang">Venäjänkieli</string>
+    <string name="fi_lang">Suomenkieli</string>
+    <string name="lang">Язык</string>
+</resources>

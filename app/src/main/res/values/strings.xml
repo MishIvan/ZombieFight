@@ -4,6 +4,16 @@
     <string name="oldc">oldCoordinates</string>
     <string name="newc">newCoordinates</string>
     <string name="game_over">Game over!</string>
-    <string name="baeten">Ha-ha! I\'ve beaten zombie!</string>
+    <string name="destroyed">Ha-ha! I\'ve beaten zombie!</string>
+    <string name="stop_item">Stop game</string>
+    <string name="start_item">Start game</string>
+    <string name="beaten">Beaten</string>
+    <string name="max_beaten">MaxBeaten</string>
+    <string name="level">Level</string>
+    <string name="start_game">Start new Game</string>
     <string name="Settings">Settings</string>
+    <string name="en_lang">English</string>
+    <string name="ru_lang">Russian</string>
+    <string name="fi_lang">Finnish</string>
+    <string name="lang">Language</string>
 </resources>

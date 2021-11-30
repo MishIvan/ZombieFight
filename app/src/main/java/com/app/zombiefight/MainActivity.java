@@ -1,20 +1,19 @@
 package com.app.zombiefight;
 
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.*;
 import android.util.Size;
 import android.view.*;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.gridlayout.widget.GridLayout;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -215,14 +214,27 @@ public class MainActivity extends AppCompatActivity {
         readSharedPreferences();
         start = true;
         stopped = false;
-        /*android.util.DisplayMetrics dm = getResources().getDisplayMetrics();
-        int height = dm.heightPixels*160/dm.densityDpi-2*5*dm.densityDpi/160;
-        int width = dm.widthPixels*160/dm.densityDpi-2*5*dm.densityDpi/160;
-        int size = Math.min(width/32, height/32);
-        TextView gl =  findViewById(R.id.level);
-        int w = gl.getMeasuredWidth();
-        int h = gl.getMeasuredHeight();
-        InitGame(new Size(size,size));*/
+
+        Locale locale = new Locale("fi");
+        Locale.setDefault(locale);
+        Configuration configuration = getResources().getConfiguration();
+        configuration.setLocale(locale);
+        //getBaseContext().createConfigurationContext(configuration);
+        getResources().updateConfiguration(configuration,
+                getResources()
+                .getDisplayMetrics());
+        ((TextView)findViewById(R.id.idZCount)).setText(getResources().getString(R.string.beaten)+": 0");
+        ((TextView)findViewById(R.id.idZCountMax)).setText(getResources().getString(R.string.max_beaten)+": "+maxBeaten);
+        ((TextView)findViewById(R.id.level)).setText(getResources().getString(R.string.level)+": "+level);
+        if(ab != null) ab.setTitle(R.string.app_name);
+
+        // выпадающий список выбора языка
+        Spinner spinner = findViewById(R.id.lang_choice);
+        String [] langs = {"EN", "RU", "FI"};
+        ArrayAdapter<String> adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item,
+                langs);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        spinner.setAdapter(adapter);
 
     }
     //инициализация игры
@@ -260,6 +272,7 @@ public class MainActivity extends AppCompatActivity {
                 image.setTag(new Size(i,j));
 
                 image.setOnTouchListener((v, event) -> {
+                    if(stopped) return true;
                     Creature creature = GameField.getCreature();
                     if(creature == null) return false;
                     if(creature.getStatus() == Entity.KILLED) return false;
@@ -282,8 +295,8 @@ public class MainActivity extends AppCompatActivity {
                     if(beaten)
                     {
                         TextView label = findViewById(R.id.idZCount);
-                        label.setText("Beaten: "+ GameField.getZombieBeaten());
-                        Toast tst = Toast.makeText(this, getResources().getString(R.string.baeten),
+                        label.setText(getResources().getString(R.string.beaten)+": "+ GameField.getZombieBeaten());
+                        Toast tst = Toast.makeText(this, getResources().getString(R.string.destroyed),
                                 Toast.LENGTH_SHORT);
                         tst.setGravity(Gravity.TOP, 0, 0);
                         tst.show();
@@ -292,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
                         if(level >= 10) level = 10;
                         delayMoving = level < 10 ? INITIAL_DELAY - (level - 1)*DELAY_STEP : 200L;
                         TextView text_level = findViewById(R.id.level);
-                        text_level.setText("Level "+level);
+                        text_level.setText(getResources().getString(R.string.level)+": "+level);
                         Timer tm = new Timer(System.currentTimeMillis());
                         tm.start();
 
@@ -304,9 +317,9 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         TextView level_text = findViewById(R.id.level);
-        level_text.setText("Level " + level);
+        level_text.setText(getResources().getString(R.string.level) +": " + level);
         TextView maxbeaten_text = findViewById(R.id.idZCountMax);
-        maxbeaten_text.setText("MaxBeaten: "+maxBeaten);
+        maxbeaten_text.setText(getResources().getString(R.string.max_beaten)+": "+maxBeaten);
     }
     // начинает новую игру
     private void startNewGame()
@@ -343,14 +356,14 @@ public class MainActivity extends AppCompatActivity {
 
         }
         TextView cnttxt = findViewById(R.id.idZCount);
-        cnttxt.setText("Beaten: "+ GameField.getZombieBeaten());
+        cnttxt.setText(getResources().getString(R.string.beaten)+": " + GameField.getZombieBeaten());
         TextView level_text = findViewById(R.id.level);
         readSharedPreferences();
         level = 1;
         delayMoving = INITIAL_DELAY;
-        level_text.setText("Level " + level);
+        level_text.setText(getResources().getString(R.string.level)+": " + level);
         TextView maxbeaten_text = findViewById(R.id.idZCountMax);
-        maxbeaten_text.setText("MaxBeaten: "+maxBeaten);
+        maxbeaten_text.setText(getResources().getString(R.string.max_beaten)+": "+maxBeaten);
 
 
     }
@@ -368,6 +381,18 @@ public class MainActivity extends AppCompatActivity {
         {
             case R.id.start_new_game:
                 startNewGame();
+                return true;
+            case R.id.stop_start:
+                if(stopped)
+                {
+                    item.setTitle(getResources().getString(R.string.stop_item));
+                    stopped = false;
+                }
+                else
+                {
+                    item.setTitle(getResources().getString(R.string.start_item));
+                    stopped = true;
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
