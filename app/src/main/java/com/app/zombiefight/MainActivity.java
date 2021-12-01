@@ -231,11 +231,25 @@ public class MainActivity extends AppCompatActivity {
         // выпадающий список выбора языка
         Spinner spinner = findViewById(R.id.lang_choice);
         String [] langs = getResources().getStringArray(R.array.languages);
-        ArrayAdapter<String> adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item,
-                langs);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.spinner_item,
+                R.id.lang_name);
+                //new ArrayAdapter(this, R.layout.spinner_item,
+                //langs);
+        //adapter.setDropDownViewResource(R.layout.spinner_item);
         spinner.setAdapter(adapter);
+        spinner.setSelection(2);
 
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
     //инициализация игры
     private void InitGame(Size fieldSize) {
@@ -410,7 +424,7 @@ public class MainActivity extends AppCompatActivity {
             float density = dm.density;
             int _w = dm.widthPixels;
             int _h = dm.heightPixels;
-            GridLayout beaten = findViewById(R.id.beaten);
+            TextView beaten = findViewById(R.id.idZCount);
             beaten.measure(0,0);
             int hg = (int)((float)beaten.getMeasuredHeight()*density);
 

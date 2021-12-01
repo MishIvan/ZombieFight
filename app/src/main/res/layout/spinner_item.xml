@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.gridlayout.widget.GridLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:rowCount="1"
+        app:columnCount="2">
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/bloody"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_row="0"
+            app:layout_column="0"
+            android:id="@+id/lang_name"/>
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/image_arrow"
+            android:src="@drawable/spin_arrow"
+            app:layout_column="1"
+            app:layout_row="0"/>
+</androidx.gridlayout.widget.GridLayout>
